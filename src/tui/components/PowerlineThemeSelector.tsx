@@ -10,6 +10,7 @@ import React, {
     useState
 } from 'react';
 
+import { t } from '../../i18n';
 import { getColorLevelString } from '../../types/ColorLevel';
 import type { Settings } from '../../types/Settings';
 import {
@@ -32,7 +33,7 @@ export function buildPowerlineThemeItems(
 
         return {
             label: theme?.name ?? themeName,
-            sublabel: themeName === originalTheme ? '(original)' : undefined,
+            sublabel: themeName === originalTheme ? t('common.original') : undefined,
             value: themeName,
             description: theme?.description ?? ''
         };
@@ -159,14 +160,14 @@ export const PowerlineThemeSelector: React.FC<PowerlineThemeSelectorProps> = ({
     if (showCustomizeConfirm) {
         return (
             <Box flexDirection='column'>
-                <Text bold color='yellow'>⚠ Confirm Customization</Text>
+                <Text bold color='yellow'>{t('powerlineTheme.confirmTitle')}</Text>
                 <Box marginTop={1} flexDirection='column'>
-                    <Text>This will copy the current theme colors to your widgets</Text>
-                    <Text>and switch to Custom theme mode.</Text>
-                    <Text color='red'>This will overwrite any existing custom colors!</Text>
+                    <Text>{t('powerlineTheme.confirmMsg1')}</Text>
+                    <Text>{t('powerlineTheme.confirmMsg2')}</Text>
+                    <Text color='red'>{t('powerlineTheme.confirmMsg3')}</Text>
                 </Box>
                 <Box marginTop={2}>
-                    <Text>Continue?</Text>
+                    <Text>{t('common.continue')}</Text>
                 </Box>
                 <Box marginTop={1}>
                     <ConfirmDialog
@@ -193,14 +194,14 @@ export const PowerlineThemeSelector: React.FC<PowerlineThemeSelectorProps> = ({
     return (
         <Box flexDirection='column'>
             <Text bold>
-                {`Powerline Theme Selection  |  `}
+                {t('powerlineTheme.title')}
                 <Text dimColor>
-                    {`Original: ${originalThemeRef.current}`}
+                    {t('powerlineTheme.originalLabel', { theme: originalThemeRef.current })}
                 </Text>
             </Text>
             <Box>
                 <Text dimColor>
-                    {`↑↓ navigate, Enter apply${selectedThemeName && selectedThemeName !== 'custom' ? ', (c)ustomize theme' : ''}, ESC cancel`}
+                    {t('powerlineTheme.hintNav', { customizeHint: selectedThemeName && selectedThemeName !== 'custom' ? t('powerlineTheme.customizeHint') : '' })}
                 </Text>
             </Box>
 
@@ -222,12 +223,12 @@ export const PowerlineThemeSelector: React.FC<PowerlineThemeSelectorProps> = ({
 
             {selectedThemeName && selectedThemeName !== 'custom' && (
                 <Box marginTop={1}>
-                    <Text dimColor>Press (c) to customize this theme - copies colors to widgets</Text>
+                    <Text dimColor>{t('powerlineTheme.customizePress')}</Text>
                 </Box>
             )}
             {settings.colorLevel === 1 && (
                 <Box marginTop={1}>
-                    <Text color='yellow'>⚠ 16 color mode themes have a very limited palette, we recommend switching color level in Terminal Options</Text>
+                    <Text color='yellow'>{t('powerlineTheme.color16Warning')}</Text>
                 </Box>
             )}
         </Box>

@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { FlexMode } from '../../types/FlexMode';
 import type { Settings } from '../../types/Settings';
 import { shouldInsertInput } from '../../utils/input-guards';
@@ -26,11 +27,11 @@ export function validateCompactThresholdInput(value: string): string | null {
     const parsedValue = parseInt(value, 10);
 
     if (isNaN(parsedValue)) {
-        return 'Please enter a valid number';
+        return t('terminalWidth.invalidNumber');
     }
 
     if (parsedValue < 1 || parsedValue > 99) {
-        return `Value must be between 1 and 99 (you entered ${parsedValue})`;
+        return t('terminalWidth.invalidRange', { n: String(parsedValue) });
     }
 
     return null;
@@ -40,26 +41,28 @@ export function buildTerminalWidthItems(
     selectedOption: FlexMode,
     compactThreshold: number
 ): ListEntry<FlexMode>[] {
+    const n = String(compactThreshold);
+
     return [
         {
             value: 'full',
-            label: 'Full width always',
-            sublabel: selectedOption === 'full' ? '(active)' : undefined,
-            description: 'Uses the full terminal width minus 4 characters for terminal padding. If the auto-compact message appears, it may cause the line to wrap.\n\nNOTE: If /ide integration is enabled, it is not recommended to use this mode.'
+            label: t('terminalWidth.fullWidth'),
+            sublabel: selectedOption === 'full' ? t('common.active') : undefined,
+            description: t('terminalWidth.fullWidthDesc')
         },
         {
             value: 'full-minus-40',
-            label: 'Full width minus 40',
-            sublabel: selectedOption === 'full-minus-40' ? '(active)' : '(default)',
-            description: 'Leaves a gap to the right of the status line to accommodate the auto-compact message. This prevents wrapping but may leave unused space. This limitation exists because we cannot detect when the message will appear.'
+            label: t('terminalWidth.fullMinus40'),
+            sublabel: selectedOption === 'full-minus-40' ? t('common.active') : t('common.default'),
+            description: t('terminalWidth.fullMinus40Desc')
         },
         {
             value: 'full-until-compact',
-            label: 'Full width until compact',
+            label: t('terminalWidth.fullUntilCompact'),
             sublabel: selectedOption === 'full-until-compact'
-                ? `(threshold ${compactThreshold}%, active)`
-                : `(threshold ${compactThreshold}%)`,
-            description: `Dynamically adjusts width based on context usage. When context reaches ${compactThreshold}%, it switches to leaving space for the auto-compact message.\n\nNOTE: If /ide integration is enabled, it is not recommended to use this mode.`
+                ? t('terminalWidth.thresholdActive', { n })
+                : t('terminalWidth.thresholdInactive', { n }),
+            description: t('terminalWidth.fullUntilCompactDesc', { threshold: n })
         }
     ];
 }
@@ -127,14 +130,14 @@ export const TerminalWidthMenu: React.FC<TerminalWidthMenuProps> = ({
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Terminal Width</Text>
-            <Text color='white'>These settings affect where long lines are truncated, and where right-alignment occurs when using flex separators</Text>
-            <Text dimColor wrap='wrap'>Claude code does not currently provide an available width variable for the statusline and features like IDE integration, auto-compaction notices, etc all cause the statusline to wrap if we do not truncate it</Text>
+            <Text bold>{t('terminalWidth.title')}</Text>
+            <Text color='white'>{t('terminalWidth.subtitle')}</Text>
+            <Text dimColor wrap='wrap'>{t('terminalWidth.subtitleNote')}</Text>
 
             {editingThreshold ? (
                 <Box marginTop={1} flexDirection='column'>
                     <Text>
-                        Enter compact threshold (1-99):
+                        {t('terminalWidth.thresholdPrompt')}
                         {' '}
                         {thresholdInput}
                         %
@@ -142,7 +145,7 @@ export const TerminalWidthMenu: React.FC<TerminalWidthMenuProps> = ({
                     {validationError ? (
                         <Text color='red'>{validationError}</Text>
                     ) : (
-                        <Text dimColor>Press Enter to confirm, ESC to cancel</Text>
+                        <Text dimColor>{t('common.pressEnterConfirm')}</Text>
                     )}
                 </Box>
             ) : (

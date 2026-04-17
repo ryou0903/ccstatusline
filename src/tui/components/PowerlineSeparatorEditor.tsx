@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import { shouldInsertInput } from '../../utils/input-guards';
 
@@ -51,24 +52,24 @@ export const PowerlineSeparatorEditor: React.FC<PowerlineSeparatorEditorProps> =
     const getPresets = () => {
         if (mode === 'separator') {
             return [
-                { char: '\uE0B0', name: 'Triangle Right', hex: 'E0B0' },
-                { char: '\uE0B2', name: 'Triangle Left', hex: 'E0B2' },
-                { char: '\uE0B4', name: 'Round Right', hex: 'E0B4' },
-                { char: '\uE0B6', name: 'Round Left', hex: 'E0B6' }
+                { char: '\uE0B0', name: t('powerline.triangleRight'), hex: 'E0B0' },
+                { char: '\uE0B2', name: t('powerline.triangleLeft'), hex: 'E0B2' },
+                { char: '\uE0B4', name: t('powerline.roundRight'), hex: 'E0B4' },
+                { char: '\uE0B6', name: t('powerline.roundLeft'), hex: 'E0B6' }
             ];
         } else if (mode === 'startCap') {
             return [
-                { char: '\uE0B2', name: 'Triangle', hex: 'E0B2' },
-                { char: '\uE0B6', name: 'Round', hex: 'E0B6' },
-                { char: '\uE0BA', name: 'Lower Triangle', hex: 'E0BA' },
-                { char: '\uE0BE', name: 'Diagonal', hex: 'E0BE' }
+                { char: '\uE0B2', name: t('powerline.triangle'), hex: 'E0B2' },
+                { char: '\uE0B6', name: t('powerline.round'), hex: 'E0B6' },
+                { char: '\uE0BA', name: t('powerline.lowerTriangle'), hex: 'E0BA' },
+                { char: '\uE0BE', name: t('powerline.diagonal'), hex: 'E0BE' }
             ];
         } else {
             return [
-                { char: '\uE0B0', name: 'Triangle', hex: 'E0B0' },
-                { char: '\uE0B4', name: 'Round', hex: 'E0B4' },
-                { char: '\uE0B8', name: 'Lower Triangle', hex: 'E0B8' },
-                { char: '\uE0BC', name: 'Diagonal', hex: 'E0BC' }
+                { char: '\uE0B0', name: t('powerline.triangle'), hex: 'E0B0' },
+                { char: '\uE0B4', name: t('powerline.round'), hex: 'E0B4' },
+                { char: '\uE0B8', name: t('powerline.lowerTriangle'), hex: 'E0B8' },
+                { char: '\uE0BC', name: t('powerline.diagonal'), hex: 'E0BC' }
             ];
         }
     };
@@ -80,12 +81,12 @@ export const PowerlineSeparatorEditor: React.FC<PowerlineSeparatorEditorProps> =
         const invertBg = invertBgs[index] ?? false;
         if (preset) {
             // Show inversion status for all separators in separator mode
-            const inversionText = mode === 'separator' && invertBg ? ' [Inverted]' : '';
+            const inversionText = mode === 'separator' && invertBg ? ` ${t('powerlineSepEditor.inverted')}` : '';
             return `${preset.char} - ${preset.name}${inversionText}`;
         }
         const codePoint = char.codePointAt(0) ?? 0;
         const hexCode = codePoint.toString(16).toUpperCase().padStart(4, '0');
-        return `${char} - Custom (U+${hexCode})${invertBg ? ' [Inverted]' : ''}`;
+        return `${char} - ${t('common.custom')} (U+${hexCode})${invertBg ? ` ${t('powerlineSepEditor.inverted')}` : ''}`;
     };
 
     const updateSeparators = (newSeparators: string[], newInvertBgs?: boolean[]) => {
@@ -262,11 +263,11 @@ export const PowerlineSeparatorEditor: React.FC<PowerlineSeparatorEditorProps> =
     const getTitle = () => {
         switch (mode) {
             case 'separator':
-                return 'Powerline Separator Configuration';
+                return t('powerlineSepEditor.separatorTitle');
             case 'startCap':
-                return 'Powerline Start Cap Configuration';
+                return t('powerlineSepEditor.startCapTitle');
             case 'endCap':
-                return 'Powerline End Cap Configuration';
+                return t('powerlineSepEditor.endCapTitle');
         }
     };
 
@@ -294,13 +295,17 @@ export const PowerlineSeparatorEditor: React.FC<PowerlineSeparatorEditorProps> =
                         {hexInput.length < 6 && hexInput.length === cursorPos && <Text dimColor>{'_'.repeat(6 - hexInput.length - 1)}</Text>}
                     </Text>
                     <Text dimColor>Enter 4-6 hex digits (0-9, A-F) for a Unicode code point, then press Enter. ESC to cancel.</Text>
-                    <Text dimColor>Examples: E0B0 (powerline), 1F984 (🦄), 2764 (❤)</Text>
+                    <Text dimColor>{t('powerlineSepEditor.hexExamples')}</Text>
                 </Box>
             ) : (
                 <>
                     <Box>
                         <Text dimColor>
-                            {`↑↓ select, ← → cycle${canAdd ? ', (a)dd, (i)nsert' : ''}${canDelete ? ', (d)elete' : ''}, (c)lear, (h)ex${mode === 'separator' ? ', (t)oggle invert' : ''}, ESC back`}
+                            {t('powerlineSepEditor.hintMain', {
+                                addHint: canAdd ? t('powerlineSepEditor.hintAdd') : '',
+                                deleteHint: canDelete ? t('powerlineSepEditor.hintDelete') : '',
+                                invertHint: mode === 'separator' ? t('powerlineSepEditor.hintInvert') : ''
+                            })}
                         </Text>
                     </Box>
 
@@ -315,7 +320,7 @@ export const PowerlineSeparatorEditor: React.FC<PowerlineSeparatorEditorProps> =
                                 </Box>
                             ))
                         ) : (
-                            <Text dimColor>(none configured - press 'a' to add)</Text>
+                            <Text dimColor>{t('powerlineSepEditor.noneConfigured')}</Text>
                         )}
                     </Box>
                 </>

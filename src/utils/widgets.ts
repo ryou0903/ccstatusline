@@ -1,3 +1,8 @@
+import {
+    tWidgetCategory,
+    tWidgetDescription,
+    tWidgetDisplayName
+} from '../i18n';
 import type { Settings } from '../types/Settings';
 import type {
     Widget,
@@ -41,41 +46,47 @@ export interface WidgetCatalogEntry {
     searchText: string;
 }
 
-const layoutCatalogEntries = new Map<WidgetItemType, WidgetCatalogEntry>(
-    LAYOUT_WIDGET_MANIFEST.map((entry): [WidgetItemType, WidgetCatalogEntry] => [
-        entry.type,
-        {
-            type: entry.type,
-            displayName: entry.displayName,
-            description: entry.description,
-            category: entry.category,
-            searchText: `${entry.displayName} ${entry.description} ${entry.type}`.toLowerCase()
-        }
-    ])
+const layoutWidgetManifestMap = new Map(
+    LAYOUT_WIDGET_MANIFEST.map(entry => [entry.type, entry])
 );
 
-function getLayoutCatalogEntry(type: WidgetItemType): WidgetCatalogEntry | null {
-    return layoutCatalogEntries.get(type) ?? null;
+function buildLayoutCatalogEntry(type: WidgetItemType): WidgetCatalogEntry | null {
+    const entry = layoutWidgetManifestMap.get(type);
+    if (!entry)
+        return null;
+    const displayName = tWidgetDisplayName(type);
+    const description = tWidgetDescription(type);
+    const category = tWidgetCategory(entry.category);
+    return {
+        type: entry.type,
+        displayName,
+        description,
+        category,
+        searchText: `${displayName} ${description} ${entry.displayName} ${entry.description} ${entry.type}`.toLowerCase()
+    };
 }
 
 export function getWidgetCatalog(settings: Settings): WidgetCatalogEntry[] {
     return getAllWidgetTypes(settings).map((type) => {
-        const layoutEntry = getLayoutCatalogEntry(type);
+        const layoutEntry = buildLayoutCatalogEntry(type);
         if (layoutEntry) {
             return layoutEntry;
         }
 
         const widget = getWidget(type);
-        const displayName = widget?.getDisplayName() ?? type;
-        const description = widget?.getDescription() ?? `Unknown widget: ${type}`;
-        const category = widget?.getCategory() ?? 'Other';
+        const enDisplayName = widget?.getDisplayName() ?? type;
+        const enDescription = widget?.getDescription() ?? '';
+        const enCategory = widget?.getCategory() ?? 'Other';
+        const displayName = tWidgetDisplayName(type);
+        const description = tWidgetDescription(type);
+        const category = tWidgetCategory(enCategory);
 
         return {
             type,
             displayName,
             description,
             category,
-            searchText: `${displayName} ${description} ${type}`.toLowerCase()
+            searchText: `${displayName} ${description} ${enDisplayName} ${enDescription} ${type}`.toLowerCase()
         };
     });
 }

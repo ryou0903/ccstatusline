@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import {
     COLOR_MAP,
@@ -165,11 +166,11 @@ export const GlobalOverridesMenu: React.FC<GlobalOverridesMenuProps> = ({ settin
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Global Overrides</Text>
-            <Text dimColor>Configure automatic padding and separators between widgets</Text>
+            <Text bold>{t('globalOverrides.title')}</Text>
+            <Text dimColor>{t('globalOverrides.subtitle')}</Text>
             {isPowerlineEnabled && (
                 <Box marginTop={1}>
-                    <Text color='yellow'>⚠ Some options are disabled while Powerline mode is active</Text>
+                    <Text color='yellow'>{t('globalOverrides.powerlineWarning')}</Text>
                 </Box>
             )}
             <Box marginTop={1} />
@@ -177,30 +178,30 @@ export const GlobalOverridesMenu: React.FC<GlobalOverridesMenuProps> = ({ settin
             {editingPadding ? (
                 <Box flexDirection='column'>
                     <Box>
-                        <Text>Enter default padding (applied to left and right of each widget): </Text>
-                        <Text color='cyan'>{paddingInput ? `"${paddingInput}"` : '(empty)'}</Text>
+                        <Text>{t('globalOverrides.paddingPrompt')}</Text>
+                        <Text color='cyan'>{paddingInput ? `"${paddingInput}"` : t('globalOverrides.paddingEmpty')}</Text>
                     </Box>
-                    <Text dimColor>Press Enter to save, ESC to cancel</Text>
+                    <Text dimColor>{t('common.pressEnterSave')}</Text>
                 </Box>
             ) : editingSeparator ? (
                 <Box flexDirection='column'>
                     <Box>
-                        <Text>Enter default separator (placed between widgets): </Text>
-                        <Text color='cyan'>{separatorInput ? `"${separatorInput}"` : '(empty - no separator will be added)'}</Text>
+                        <Text>{t('globalOverrides.separatorPrompt')}</Text>
+                        <Text color='cyan'>{separatorInput ? `"${separatorInput}"` : t('globalOverrides.separatorEmpty')}</Text>
                     </Box>
-                    <Text dimColor>Press Enter to save, ESC to cancel</Text>
+                    <Text dimColor>{t('common.pressEnterSave')}</Text>
                 </Box>
             ) : confirmingSeparator ? (
                 <Box flexDirection='column'>
                     <Box marginBottom={1}>
-                        <Text color='yellow'>⚠ Warning: Setting a default separator will remove all existing manual separators from your status lines.</Text>
+                        <Text color='yellow'>{t('globalOverrides.separatorWarning')}</Text>
                     </Box>
                     <Box>
-                        <Text>New default separator: </Text>
-                        <Text color='cyan'>{separatorInput ? `"${separatorInput}"` : '(empty)'}</Text>
+                        <Text>{t('globalOverrides.newSeparator')}</Text>
+                        <Text color='cyan'>{separatorInput ? `"${separatorInput}"` : t('common.none')}</Text>
                     </Box>
                     <Box marginTop={1}>
-                        <Text>Do you want to continue? </Text>
+                        <Text>{t('globalOverrides.separatorConfirm')}</Text>
                     </Box>
                     <Box marginTop={1}>
                         <ConfirmDialog
@@ -227,29 +228,38 @@ export const GlobalOverridesMenu: React.FC<GlobalOverridesMenuProps> = ({ settin
             ) : (
                 <>
                     <Box>
-                        <Text>      Global Bold: </Text>
-                        <Text color={globalBold ? 'green' : 'red'}>{globalBold ? '✓ Enabled' : '✗ Disabled'}</Text>
-                        <Text dimColor> - Press (o) to toggle</Text>
+                        <Text>
+                            {' '}
+                            {t('globalOverrides.globalBold')}
+                        </Text>
+                        <Text color={globalBold ? 'green' : 'red'}>{globalBold ? t('common.enabled') : t('common.disabled')}</Text>
+                        <Text dimColor>{t('globalOverrides.toggleBoldHint')}</Text>
                     </Box>
 
                     <Box>
-                        <Text>  Minimalist Mode: </Text>
-                        <Text color={minimalistMode ? 'green' : 'red'}>{minimalistMode ? '✓ Enabled' : '✗ Disabled'}</Text>
-                        <Text dimColor> - Press (m) to toggle</Text>
+                        <Text>
+                            {' '}
+                            {t('globalOverrides.minimalistMode')}
+                        </Text>
+                        <Text color={minimalistMode ? 'green' : 'red'}>{minimalistMode ? t('common.enabled') : t('common.disabled')}</Text>
+                        <Text dimColor>{t('globalOverrides.toggleMinimalistHint')}</Text>
                     </Box>
 
                     <Box>
-                        <Text>  Default Padding: </Text>
-                        <Text color='cyan'>{settings.defaultPadding ? `"${settings.defaultPadding}"` : '(none)'}</Text>
-                        <Text dimColor> - Press (p) to edit</Text>
+                        <Text>
+                            {' '}
+                            {t('globalOverrides.defaultPadding')}
+                        </Text>
+                        <Text color='cyan'>{settings.defaultPadding ? `"${settings.defaultPadding}"` : t('common.none')}</Text>
+                        <Text dimColor>{t('globalOverrides.editPaddingHint')}</Text>
                     </Box>
 
                     <Box>
-                        <Text>Override FG Color: </Text>
+                        <Text>{t('globalOverrides.overrideFg')}</Text>
                         {(() => {
                             const fgColor = settings.overrideForegroundColor ?? 'none';
                             if (fgColor === 'none') {
-                                return <Text color='gray'>(none)</Text>;
+                                return <Text color='gray'>{t('common.none')}</Text>;
                             } else {
                                 const displayName = getColorDisplayName(fgColor);
                                 const fgChalk = getChalkColor(fgColor, 'ansi16', false);
@@ -257,19 +267,19 @@ export const GlobalOverridesMenu: React.FC<GlobalOverridesMenuProps> = ({ settin
                                 return <Text>{display}</Text>;
                             }
                         })()}
-                        <Text dimColor> - (f) cycle, (g) clear</Text>
+                        <Text dimColor>{t('globalOverrides.cycleFgHint')}</Text>
                     </Box>
 
                     <Box>
-                        <Text>Override BG Color: </Text>
+                        <Text>{t('globalOverrides.overrideBg')}</Text>
                         {isPowerlineEnabled ? (
-                            <Text dimColor>[disabled - Powerline active]</Text>
+                            <Text dimColor>{t('globalOverrides.disabledPowerline')}</Text>
                         ) : (
                             <>
                                 {(() => {
                                     const bgColor = settings.overrideBackgroundColor ?? 'none';
                                     if (bgColor === 'none') {
-                                        return <Text color='gray'>(none)</Text>;
+                                        return <Text color='gray'>{t('common.none')}</Text>;
                                     } else {
                                         const displayName = getColorDisplayName(bgColor);
                                         const bgChalk = getChalkColor(bgColor, 'ansi16', true);
@@ -277,54 +287,54 @@ export const GlobalOverridesMenu: React.FC<GlobalOverridesMenuProps> = ({ settin
                                         return <Text>{display}</Text>;
                                     }
                                 })()}
-                                <Text dimColor> - (b) cycle, (c) clear</Text>
+                                <Text dimColor>{t('globalOverrides.cycleBgHint')}</Text>
                             </>
                         )}
                     </Box>
 
                     <Box>
-                        <Text>   Inherit Colors: </Text>
+                        <Text>
+                            {' '}
+                            {t('globalOverrides.inheritColors')}
+                        </Text>
                         {isPowerlineEnabled ? (
-                            <Text dimColor>[disabled - Powerline active]</Text>
+                            <Text dimColor>{t('globalOverrides.disabledPowerline')}</Text>
                         ) : (
                             <>
-                                <Text color={inheritColors ? 'green' : 'red'}>{inheritColors ? '✓ Enabled' : '✗ Disabled'}</Text>
-                                <Text dimColor> - Press (i) to toggle</Text>
+                                <Text color={inheritColors ? 'green' : 'red'}>{inheritColors ? t('common.enabled') : t('common.disabled')}</Text>
+                                <Text dimColor>{t('globalOverrides.toggleInheritHint')}</Text>
                             </>
                         )}
                     </Box>
 
                     <Box>
-                        <Text>Default Separator: </Text>
+                        <Text>{t('globalOverrides.defaultSeparator')}</Text>
                         {isPowerlineEnabled ? (
-                            <Text dimColor>[disabled - Powerline active]</Text>
+                            <Text dimColor>{t('globalOverrides.disabledPowerline')}</Text>
                         ) : (
                             <>
-                                <Text color='cyan'>{settings.defaultSeparator ? `"${settings.defaultSeparator}"` : '(none)'}</Text>
-                                <Text dimColor> - Press (s) to edit</Text>
+                                <Text color='cyan'>{settings.defaultSeparator ? `"${settings.defaultSeparator}"` : t('common.none')}</Text>
+                                <Text dimColor>{t('globalOverrides.editSeparatorHint')}</Text>
                             </>
                         )}
                     </Box>
 
                     <Box marginTop={2}>
-                        <Text dimColor>Press ESC to go back</Text>
+                        <Text dimColor>{t('globalOverrides.escBack')}</Text>
                     </Box>
 
                     <Box marginTop={1} flexDirection='column'>
                         <Text dimColor wrap='wrap'>
-                            Note: These settings are applied during rendering and don't add widgets to your widget list.
+                            {t('globalOverrides.inheritHelp')}
                         </Text>
                         <Text dimColor wrap='wrap'>
-                            • Inherit colors: Separators will use colors from the preceding widget
+                            {t('globalOverrides.boldHelp')}
                         </Text>
                         <Text dimColor wrap='wrap'>
-                            • Global Bold: Makes all text bold regardless of individual settings
+                            {t('globalOverrides.minimalistHelp')}
                         </Text>
                         <Text dimColor wrap='wrap'>
-                            • Minimalist Mode: Strips decorative prefixes and labels from widgets
-                        </Text>
-                        <Text dimColor wrap='wrap'>
-                            • Override colors: All widgets will use these colors instead of their configured colors
+                            {t('globalOverrides.fgHelp')}
                         </Text>
                     </Box>
                 </>

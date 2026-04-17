@@ -6,6 +6,7 @@ import {
 import * as os from 'os';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { PowerlineConfig } from '../../types/PowerlineConfig';
 import type { Settings } from '../../types/Settings';
 import { type PowerlineFontStatus } from '../../utils/powerline';
@@ -31,15 +32,15 @@ export function getSeparatorDisplay(powerlineConfig: PowerlineConfig): string {
     const seps = powerlineConfig.separators;
 
     if (seps.length > 1) {
-        return 'multiple';
+        return t('powerline.multiple');
     }
 
     const sep = seps[0] ?? '\uE0B0';
     const presets = [
-        { char: '\uE0B0', name: 'Triangle Right' },
-        { char: '\uE0B2', name: 'Triangle Left' },
-        { char: '\uE0B4', name: 'Round Right' },
-        { char: '\uE0B6', name: 'Round Left' }
+        { char: '\uE0B0', name: t('powerline.triangleRight') },
+        { char: '\uE0B2', name: t('powerline.triangleLeft') },
+        { char: '\uE0B4', name: t('powerline.roundRight') },
+        { char: '\uE0B6', name: t('powerline.roundLeft') }
     ];
     const preset = presets.find(item => item.char === sep);
 
@@ -47,7 +48,7 @@ export function getSeparatorDisplay(powerlineConfig: PowerlineConfig): string {
         return `${preset.char} - ${preset.name}`;
     }
 
-    return `${sep} - Custom`;
+    return `${sep} - ${t('common.custom')}`;
 }
 
 export function getCapDisplay(
@@ -59,29 +60,29 @@ export function getCapDisplay(
         : powerlineConfig.endCaps;
 
     if (caps.length === 0) {
-        return 'none';
+        return t('powerline.none');
     }
 
     if (caps.length > 1) {
-        return 'multiple';
+        return t('powerline.multiple');
     }
 
     const cap = caps[0];
 
     if (!cap) {
-        return 'none';
+        return t('powerline.none');
     }
 
     const presets = type === 'start' ? [
-        { char: '\uE0B2', name: 'Triangle' },
-        { char: '\uE0B6', name: 'Round' },
-        { char: '\uE0BA', name: 'Lower Triangle' },
-        { char: '\uE0BE', name: 'Diagonal' }
+        { char: '\uE0B2', name: t('powerline.triangle') },
+        { char: '\uE0B6', name: t('powerline.round') },
+        { char: '\uE0BA', name: t('powerline.lowerTriangle') },
+        { char: '\uE0BE', name: t('powerline.diagonal') }
     ] : [
-        { char: '\uE0B0', name: 'Triangle' },
-        { char: '\uE0B4', name: 'Round' },
-        { char: '\uE0B8', name: 'Lower Triangle' },
-        { char: '\uE0BC', name: 'Diagonal' }
+        { char: '\uE0B0', name: t('powerline.triangle') },
+        { char: '\uE0B4', name: t('powerline.round') },
+        { char: '\uE0B8', name: t('powerline.lowerTriangle') },
+        { char: '\uE0BC', name: t('powerline.diagonal') }
     ];
     const preset = presets.find(item => item.char === cap);
 
@@ -89,14 +90,14 @@ export function getCapDisplay(
         return `${preset.char} - ${preset.name}`;
     }
 
-    return `${cap} - Custom`;
+    return `${cap} - ${t('common.custom')}`;
 }
 
 export function getThemeDisplay(powerlineConfig: PowerlineConfig): string {
     const theme = powerlineConfig.theme;
 
     if (!theme || theme === 'custom') {
-        return 'Custom';
+        return t('common.custom');
     }
 
     return theme.charAt(0).toUpperCase() + theme.slice(1);
@@ -109,32 +110,32 @@ export function buildPowerlineSetupMenuItems(
 
     return [
         {
-            label: formatPowerlineMenuLabel('Separator'),
+            label: formatPowerlineMenuLabel(t('powerline.separator')),
             sublabel: `(${getSeparatorDisplay(powerlineConfig)})`,
             value: 'separator',
             disabled,
-            description: 'Choose the glyph used between powerline segments.'
+            description: t('powerline.separatorDesc')
         },
         {
-            label: formatPowerlineMenuLabel('Start Cap'),
+            label: formatPowerlineMenuLabel(t('powerline.startCap')),
             sublabel: `(${getCapDisplay(powerlineConfig, 'start')})`,
             value: 'startCap',
             disabled,
-            description: 'Configure the cap glyph that appears at the start of each powerline line.'
+            description: t('powerline.startCapDesc')
         },
         {
-            label: formatPowerlineMenuLabel('End Cap'),
+            label: formatPowerlineMenuLabel(t('powerline.endCap')),
             sublabel: `(${getCapDisplay(powerlineConfig, 'end')})`,
             value: 'endCap',
             disabled,
-            description: 'Configure the cap glyph that appears at the end of each powerline line.'
+            description: t('powerline.endCapDesc')
         },
         {
-            label: formatPowerlineMenuLabel('Themes'),
+            label: formatPowerlineMenuLabel(t('powerline.themes')),
             sublabel: `(${getThemeDisplay(powerlineConfig)})`,
             value: 'themes',
             disabled,
-            description: 'Preview built-in powerline themes or copy a theme into custom widget colors.'
+            description: t('powerline.themesDesc')
         }
     ];
 }
@@ -269,19 +270,19 @@ export const PowerlineSetup: React.FC<PowerlineSetupProps> = ({
     return (
         <Box flexDirection='column'>
             {!confirmingFontInstall && !installingFonts && !fontInstallMessage && (
-                <Text bold>Powerline Setup</Text>
+                <Text bold>{t('powerline.title')}</Text>
             )}
 
             {confirmingFontInstall ? (
                 <Box flexDirection='column'>
                     <Box marginBottom={1}>
-                        <Text color='cyan' bold>Font Installation</Text>
+                        <Text color='cyan' bold>{t('powerline.fontInstall')}</Text>
                     </Box>
 
                     <Box marginBottom={1} flexDirection='column'>
-                        <Text bold>What will happen:</Text>
+                        <Text bold>{t('powerline.whatWillHappen')}</Text>
                         <Text>
-                            <Text dimColor>• Clone fonts from </Text>
+                            <Text dimColor>{t('powerline.cloneFrom')}</Text>
                             <Text color='blue'>https://github.com/powerline/fonts</Text>
                         </Text>
                         {os.platform() === 'darwin' && (
@@ -308,19 +309,22 @@ export const PowerlineSetup: React.FC<PowerlineSetupProps> = ({
                     </Box>
 
                     <Box marginBottom={1}>
-                        <Text color='yellow' bold>Requirements: </Text>
-                        <Text dimColor>Git installed, Internet connection, Write permissions</Text>
+                        <Text color='yellow' bold>{t('powerline.requirements')}</Text>
+                        <Text dimColor>{t('powerline.requirementsDetail')}</Text>
                     </Box>
 
                     <Box marginBottom={1} flexDirection='column'>
-                        <Text color='green' bold>After install:</Text>
-                        <Text dimColor>• Restart terminal</Text>
-                        <Text dimColor>• Select a Powerline font</Text>
-                        <Text dimColor>  (e.g. "Meslo LG S for Powerline")</Text>
+                        <Text color='green' bold>{t('powerline.afterInstall')}</Text>
+                        <Text dimColor>{t('powerline.restartTerminal')}</Text>
+                        <Text dimColor>{t('powerline.selectFont')}</Text>
+                        <Text dimColor>
+                            {'  '}
+                            {t('powerline.selectFontExample')}
+                        </Text>
                     </Box>
 
                     <Box marginTop={1}>
-                        <Text>Proceed? </Text>
+                        <Text>{t('powerline.proceed')}</Text>
                     </Box>
                     <Box marginTop={1}>
                         <ConfirmDialog
@@ -340,15 +344,15 @@ export const PowerlineSetup: React.FC<PowerlineSetupProps> = ({
                     {hasSeparatorItems && (
                         <>
                             <Box>
-                                <Text color='yellow'>⚠ Warning: Enabling Powerline mode will remove all existing separators and flex-separators from your status lines.</Text>
+                                <Text color='yellow'>{t('powerline.enableWarning')}</Text>
                             </Box>
                             <Box marginBottom={1}>
-                                <Text dimColor>Powerline mode uses its own separator system and is incompatible with manual separators.</Text>
+                                <Text dimColor>{t('powerline.enableWarningDetail')}</Text>
                             </Box>
                         </>
                     )}
                     <Box marginTop={hasSeparatorItems ? 1 : 0}>
-                        <Text>Do you want to continue? </Text>
+                        <Text>{t('powerline.enableConfirm')}</Text>
                     </Box>
                     <Box marginTop={1}>
                         <ConfirmDialog
@@ -365,7 +369,7 @@ export const PowerlineSetup: React.FC<PowerlineSetupProps> = ({
                 </Box>
             ) : installingFonts ? (
                 <Box>
-                    <Text color='yellow'>Installing Powerline fonts... This may take a moment.</Text>
+                    <Text color='yellow'>{t('powerline.installing')}</Text>
                 </Box>
             ) : fontInstallMessage ? (
                 <Box flexDirection='column'>
@@ -373,52 +377,56 @@ export const PowerlineSetup: React.FC<PowerlineSetupProps> = ({
                         {fontInstallMessage}
                     </Text>
                     <Box marginTop={1}>
-                        <Text dimColor>Press any key to continue...</Text>
+                        <Text dimColor>{t('common.pressAnyKeyBack')}</Text>
                     </Box>
                 </Box>
             ) : (
                 <>
                     <Box flexDirection='column'>
                         <Text>
-                            {'    Font Status: '}
+                            {'    '}
+                            {t('powerline.fontStatus')}
                             {powerlineFontStatus.installed ? (
                                 <>
-                                    <Text color='green'>✓ Installed</Text>
-                                    <Text dimColor> - Ensure fonts are active in your terminal</Text>
+                                    <Text color='green'>{t('powerline.fontInstalled')}</Text>
+                                    <Text dimColor>{t('powerline.fontInstalledHint')}</Text>
                                 </>
                             ) : (
                                 <>
-                                    <Text color='yellow'>✗ Not Installed</Text>
-                                    <Text dimColor> - Press (i) to install Powerline fonts</Text>
+                                    <Text color='yellow'>{t('powerline.fontNotInstalled')}</Text>
+                                    <Text dimColor>{t('powerline.fontNotInstalledHint')}</Text>
                                 </>
                             )}
                         </Text>
                     </Box>
 
                     <Box>
-                        <Text> Powerline Mode: </Text>
+                        <Text>{t('powerline.powerlineMode')}</Text>
                         <Text color={powerlineConfig.enabled ? 'green' : 'red'}>
-                            {powerlineConfig.enabled ? '✓ Enabled  ' : '✗ Disabled '}
+                            {powerlineConfig.enabled ? `${t('common.enabled')}  ` : `${t('common.disabled')} `}
                         </Text>
-                        <Text dimColor> - Press (t) to toggle</Text>
+                        <Text dimColor>{t('powerline.toggleHint')}</Text>
                     </Box>
 
                     {powerlineConfig.enabled && (
                         <>
                             <Box>
-                                <Text>  Align Widgets: </Text>
-                                <Text color={powerlineConfig.autoAlign ? 'green' : 'red'}>
-                                    {powerlineConfig.autoAlign ? '✓ Enabled  ' : '✗ Disabled '}
+                                <Text>
+                                    {'  '}
+                                    {t('powerline.alignWidgets')}
                                 </Text>
-                                <Text dimColor> - Press (a) to toggle</Text>
+                                <Text color={powerlineConfig.autoAlign ? 'green' : 'red'}>
+                                    {powerlineConfig.autoAlign ? `${t('common.enabled')}  ` : `${t('common.disabled')} `}
+                                </Text>
+                                <Text dimColor>{t('powerline.alignToggleHint')}</Text>
                             </Box>
 
                             <Box>
-                                <Text> Continue Theme: </Text>
+                                <Text>{t('powerline.continueTheme')}</Text>
                                 <Text color={powerlineConfig.continueThemeAcrossLines ? 'green' : 'red'}>
-                                    {powerlineConfig.continueThemeAcrossLines ? '✓ Enabled  ' : '✗ Disabled '}
+                                    {powerlineConfig.continueThemeAcrossLines ? `${t('common.enabled')}  ` : `${t('common.disabled')} `}
                                 </Text>
-                                <Text dimColor> - Press (c) to toggle</Text>
+                                <Text dimColor>{t('powerline.continueToggleHint')}</Text>
                             </Box>
 
                             <Box flexDirection='column' marginTop={1}>

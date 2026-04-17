@@ -5,6 +5,8 @@ import {
 } from 'ink';
 import React from 'react';
 
+import { t } from '../../i18n';
+
 import {
     List,
     type ListEntry
@@ -19,11 +21,11 @@ export interface ConfirmDialogProps {
 
 const CONFIRM_OPTIONS: ListEntry<boolean>[] = [
     {
-        label: 'Yes',
+        label: t('common.yes'),
         value: true
     },
     {
-        label: 'No',
+        label: t('common.no'),
         value: false
     }
 ];

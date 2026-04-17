@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React from 'react';
 
+import { t } from '../../i18n';
 import { getClaudeSettingsPath } from '../../utils/claude-settings';
 
 import { List } from './List';
@@ -50,12 +51,12 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
     const listItems = [
         {
-            label: 'npx - Node Package Execute',
+            label: t('install.npx'),
             value: 'npx'
         },
         {
-            label: 'bunx - Bun Package Execute',
-            sublabel: bunxAvailable ? undefined : '(not installed)',
+            label: t('install.bunx'),
+            sublabel: bunxAvailable ? undefined : t('install.notInstalled'),
             value: 'bunx',
             disabled: !bunxAvailable
         }
@@ -63,20 +64,18 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Install ccstatusline to Claude Code</Text>
+            <Text bold>{t('install.title')}</Text>
 
             {existingStatusLine && (
                 <Box marginBottom={1}>
                     <Text color='yellow'>
-                        ⚠ Current status line: "
-                        {existingStatusLine}
-                        "
+                        {t('install.currentStatusLine', { line: existingStatusLine })}
                     </Text>
                 </Box>
             )}
 
             <Box>
-                <Text dimColor>Select package manager to use:</Text>
+                <Text dimColor>{t('install.selectPackageManager')}</Text>
             </Box>
 
             <List
@@ -97,14 +96,12 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
             <Box marginTop={2}>
                 <Text dimColor>
-                    The selected command will be written to
-                    {' '}
-                    {getClaudeSettingsPath()}
+                    {t('install.writeTo', { path: getClaudeSettingsPath() })}
                 </Text>
             </Box>
 
             <Box marginTop={1}>
-                <Text dimColor>Press Enter to select, ESC to cancel</Text>
+                <Text dimColor>{t('common.pressEnterSelect')}</Text>
             </Box>
         </Box>
     );

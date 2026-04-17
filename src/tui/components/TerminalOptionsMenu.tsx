@@ -6,6 +6,7 @@ import {
 } from 'ink';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import {
     hasCustomWidgetColors,
@@ -39,21 +40,15 @@ export function buildTerminalOptionsItems(
 ): ListEntry<TerminalOptionsValue>[] {
     return [
         {
-            label: '◱ Terminal Width',
+            label: t('terminal.terminalWidth'),
             value: 'width',
-            description: 'Configure how the status line uses available terminal width and when it should compact.'
+            description: t('terminal.terminalWidthDesc')
         },
         {
-            label: '▓ Color Level',
+            label: t('terminal.colorLevel'),
             sublabel: `(${getColorLevelLabel(colorLevel)})`,
             value: 'colorLevel',
-            description: [
-                'Color level affects how colors are rendered:',
-                '• Truecolor: Full 24-bit RGB colors (16.7M colors)',
-                '• 256 Color: Extended color palette (256 colors)',
-                '• Basic: Standard 16-color terminal palette',
-                '• No Color: Disables all color output'
-            ].join('\n')
+            description: t('terminal.colorLevelDesc')
         }
     ];
 }
@@ -133,14 +128,14 @@ export const TerminalOptionsMenu: React.FC<TerminalOptionsMenuProps> = ({
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Terminal Options</Text>
+            <Text bold>{t('terminal.title')}</Text>
             {showColorWarning ? (
                 <Box flexDirection='column' marginTop={1}>
-                    <Text color='yellow'>⚠ Warning: Custom colors detected!</Text>
-                    <Text>Switching color modes will reset custom ansi256 or hex colors to defaults.</Text>
+                    <Text color='yellow'>{t('terminal.colorWarningTitle')}</Text>
+                    <Text>{t('terminal.colorWarningMsg')}</Text>
                     <Box marginTop={1}>
                         <ConfirmDialog
-                            message='Continue?'
+                            message={t('common.continue')}
                             onConfirm={handleColorConfirm}
                             onCancel={handleColorCancel}
                             inline
@@ -149,7 +144,7 @@ export const TerminalOptionsMenu: React.FC<TerminalOptionsMenuProps> = ({
                 </Box>
             ) : (
                 <>
-                    <Text color='white'>Configure terminal-specific settings for optimal display</Text>
+                    <Text color='white'>{t('terminal.subtitle')}</Text>
                     <List
                         marginTop={1}
                         items={buildTerminalOptionsItems(settings.colorLevel)}
@@ -164,11 +159,11 @@ export const TerminalOptionsMenu: React.FC<TerminalOptionsMenuProps> = ({
 
 export const getColorLevelLabel = (level?: 0 | 1 | 2 | 3): string => {
     switch (level) {
-        case 0: return 'No Color';
-        case 1: return 'Basic';
+        case 0: return t('terminal.noColor');
+        case 1: return t('terminal.basicColor');
         case 2:
-        case undefined: return '256 Color (default)';
-        case 3: return 'Truecolor';
-        default: return '256 Color (default)';
+        case undefined: return t('terminal.color256');
+        case 3: return t('terminal.truecolor');
+        default: return t('terminal.color256');
     }
 };

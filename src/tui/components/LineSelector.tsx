@@ -3,13 +3,13 @@ import {
     Text,
     useInput
 } from 'ink';
-import pluralize from 'pluralize';
 import React, {
     useEffect,
     useMemo,
     useState
 } from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import type { WidgetItem } from '../../types/Widget';
 
@@ -153,27 +153,24 @@ const LineSelector: React.FC<LineSelectorProps> = ({
                 <Text bold>{title ?? 'Select Line'}</Text>
                 <Box marginTop={1}>
                     <Text color='yellow'>
-                        ⚠ Colors are currently managed by the Powerline theme:
-                        {' '
-                            + powerlineTheme.charAt(0).toUpperCase()
-                            + powerlineTheme.slice(1)}
+                        {t('lineSelector.powerlineColorWarning', { theme: powerlineTheme.charAt(0).toUpperCase() + powerlineTheme.slice(1) })}
                     </Text>
                 </Box>
                 <Box marginTop={1}>
-                    <Text dimColor>To customize colors, either:</Text>
+                    <Text dimColor>{t('lineSelector.powerlineColorHint1')}</Text>
                 </Box>
                 <Box marginLeft={2}>
                     <Text dimColor>
-                        • Change to 'Custom' theme in Powerline Configuration → Themes
+                        {t('lineSelector.powerlineColorHint2')}
                     </Text>
                 </Box>
                 <Box marginLeft={2}>
                     <Text dimColor>
-                        • Disable Powerline mode in Powerline Configuration
+                        {t('lineSelector.powerlineColorHint3')}
                     </Text>
                 </Box>
                 <Box marginTop={2}>
-                    <Text>Press any key to go back...</Text>
+                    <Text>{t('common.pressAnyKeyBack')}</Text>
                 </Box>
             </Box>
         );
@@ -182,8 +179,8 @@ const LineSelector: React.FC<LineSelectorProps> = ({
     if (showDeleteDialog && selectedLine) {
         const suffix
             = selectedLine.length > 0
-                ? pluralize('widget', selectedLine.length, true)
-                : 'empty';
+                ? `${selectedLine.length} ${selectedLine.length === 1 ? t('common.widget') : t('common.widgets')}`
+                : t('lineSelector.emptyLine');
 
         return (
             <Box flexDirection='column'>
@@ -191,7 +188,7 @@ const LineSelector: React.FC<LineSelectorProps> = ({
                     <Text bold>
                         <Text>
                             <Text>
-                                ☰ Line
+                                {t('lineSelector.lineIndicator')}
                                 {selectedIndex + 1}
                             </Text>
                             {' '}
@@ -202,7 +199,7 @@ const LineSelector: React.FC<LineSelectorProps> = ({
                             </Text>
                         </Text>
                     </Text>
-                    <Text bold>Are you sure you want to delete line?</Text>
+                    <Text bold>{t('confirm.deleteLine')}</Text>
                 </Box>
 
                 <Box marginTop={1}>
@@ -223,8 +220,8 @@ const LineSelector: React.FC<LineSelectorProps> = ({
     }
 
     const lineItems = localLines.map((line, index) => ({
-        label: `☰ Line ${index + 1}`,
-        sublabel: `(${line.length > 0 ? pluralize('widget', line.length, true) : 'empty'})`,
+        label: `${t('lineSelector.lineIndicator')} ${index + 1}`,
+        sublabel: `(${line.length > 0 ? `${line.length} ${line.length === 1 ? t('common.widget') : t('common.widgets')}` : t('lineSelector.emptyLine')})`,
         value: index
     }));
 
@@ -233,23 +230,23 @@ const LineSelector: React.FC<LineSelectorProps> = ({
             <Box flexDirection='column'>
                 <Box>
                     <Text bold>
-                        {title ?? 'Select Line to Edit'}
+                        {title ?? t('lineSelector.title')}
                         {' '}
                     </Text>
-                    {moveMode && <Text color='blue'>[MOVE MODE]</Text>}
+                    {moveMode && <Text color='blue'>{t('lineSelector.moveMode')}</Text>}
                 </Box>
                 <Text dimColor>
-                    Choose which status line to configure
+                    {t('lineSelector.chooseHint')}
                 </Text>
                 {moveMode ? (
-                    <Text dimColor>↑↓ to move line, ESC or Enter to exit move mode</Text>
+                    <Text dimColor>{t('lineSelector.moveModeHint')}</Text>
                 ) : (
                     <Text dimColor>
                         {allowEditing ? (
                             localLines.length > 1
-                                ? '(a) to append new line, (d) to delete line, (m) to move line, ESC to go back'
-                                : '(a) to append new line, ESC to go back'
-                        ) : 'ESC to go back'}
+                                ? t('lineSelector.hintFull')
+                                : t('lineSelector.hintAppendOnly')
+                        ) : t('lineSelector.hintEscOnly')}
                     </Text>
                 )}
 
@@ -258,8 +255,8 @@ const LineSelector: React.FC<LineSelectorProps> = ({
                         {localLines.map((line, index) => {
                             const isSelected = selectedIndex === index;
                             const suffix = line.length
-                                ? pluralize('widget', line.length, true)
-                                : 'empty';
+                                ? `${line.length} ${line.length === 1 ? t('common.widget') : t('common.widgets')}`
+                                : t('lineSelector.emptyLine');
 
                             return (
                                 <Box key={index}>
@@ -267,7 +264,7 @@ const LineSelector: React.FC<LineSelectorProps> = ({
                                         <Text>{isSelected ? '◆  ' : '   '}</Text>
                                         <Text>
                                             <Text>
-                                                ☰ Line
+                                                {t('lineSelector.lineIndicator')}
                                                 {' '}
                                                 {index + 1}
                                             </Text>

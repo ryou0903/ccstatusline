@@ -13,6 +13,10 @@ import React, {
     useState
 } from 'react';
 
+import {
+    initLanguage,
+    t
+} from '../i18n';
 import type { Settings } from '../types/Settings';
 import type { WidgetItem } from '../types/Widget';
 import {
@@ -50,6 +54,7 @@ import {
     GlobalOverridesMenu,
     InstallMenu,
     ItemsEditor,
+    LanguageSelector,
     LineSelector,
     MainMenu,
     PowerlineSetup,
@@ -78,7 +83,8 @@ type AppScreen = 'main'
     | 'confirm'
     | 'powerline'
     | 'install'
-    | 'refreshInterval';
+    | 'refreshInterval'
+    | 'language';
 
 interface ConfirmDialogState {
     message: string;
@@ -129,6 +135,7 @@ export const App: React.FC = () => {
             // Set global chalk level based on settings (default to 256 colors for compatibility)
             chalk.level = loadedSettings.colorLevel;
             setSettings(loadedSettings);
+            initLanguage(loadedSettings.language);
             setOriginalSettings(cloneSettings(loadedSettings));
         });
         void isInstalled().then(setIsClaudeInstalled);
@@ -181,7 +188,7 @@ export const App: React.FC = () => {
                 setOriginalSettings(cloneSettings(settings));
                 setHasChanges(false);
                 setFlashMessage({
-                    text: '✓ Configuration saved',
+                    text: t('common.saved'),
                     color: 'green'
                 });
             })();
@@ -234,7 +241,7 @@ export const App: React.FC = () => {
     }, []);
 
     if (!settings) {
-        return <Text>Loading settings...</Text>;
+        return <Text>{t('common.loading')}</Text>;
     }
 
     const handleInstallUninstall = () => {
@@ -274,6 +281,9 @@ export const App: React.FC = () => {
                 break;
             case 'powerline':
                 setScreen('powerline');
+                break;
+            case 'language':
+                setScreen('language');
                 break;
             case 'install':
                 handleInstallUninstall();
@@ -336,7 +346,7 @@ export const App: React.FC = () => {
             <Box marginBottom={1}>
                 <Text bold>
                     <Gradient name='retro'>
-                        CCStatusline Configuration
+                        {t('common.configTitle')}
                     </Gradient>
                 </Text>
                 <Text bold>
@@ -393,7 +403,7 @@ export const App: React.FC = () => {
                             setScreen('main');
                         }}
                         initialSelection={menuSelections.lines}
-                        title='Select Line to Edit Items'
+                        title={t('lineSelector.titleItems')}
                         allowEditing={true}
                     />
                 )}
@@ -425,7 +435,7 @@ export const App: React.FC = () => {
                             setScreen('main');
                         }}
                         initialSelection={menuSelections.lines}
-                        title='Select Line to Edit Colors'
+                        title={t('lineSelector.titleColors')}
                         blockIfPowerlineActive={true}
                         settings={settings}
                         allowEditing={false}
@@ -535,6 +545,17 @@ export const App: React.FC = () => {
                         onBack={() => {
                             setScreen('main');
                         }}
+                    />
+                )}
+                {screen === 'language' && (
+                    <LanguageSelector
+                        currentLanguage={settings.language}
+                        onSelect={(lang) => {
+                            initLanguage(lang);
+                            setSettings({ ...settings, language: lang });
+                            setScreen('main');
+                        }}
+                        onBack={() => { setScreen('main'); }}
                     />
                 )}
                 {screen === 'powerline' && (

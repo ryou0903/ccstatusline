@@ -7,6 +7,7 @@ import {
 import SelectInput from 'ink-select-input';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import { getColorLevelString } from '../../types/ColorLevel';
 import type { Settings } from '../../types/Settings';
 import type { WidgetItem } from '../../types/Widget';
@@ -225,12 +226,12 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
         return (
             <Box flexDirection='column'>
                 <Text bold>
-                    Configure Colors
+                    {t('colorMenu.title')}
                     {lineIndex !== undefined ? ` - Line ${lineIndex + 1}` : ''}
                 </Text>
-                <Box marginTop={1}><Text dimColor>No colorable widgets in the status line.</Text></Box>
-                <Text dimColor>Add a widget first to continue.</Text>
-                <Box marginTop={1}><Text>Press any key to go back...</Text></Box>
+                <Box marginTop={1}><Text dimColor>{t('colorMenu.noWidgets')}</Text></Box>
+                <Text dimColor>{t('colorMenu.addWidgetHint')}</Text>
+                <Box marginTop={1}><Text>{t('common.pressAnyKeyBack')}</Text></Box>
             </Box>
         );
     }
@@ -238,10 +239,10 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
     const getItemLabel = (widget: WidgetItem) => {
         if (widget.type === 'separator') {
             const char = widget.character ?? '|';
-            return `Separator: ${char === ' ' ? 'space' : char}`;
+            return t('colorMenu.separatorLabel', { char: char === ' ' ? t('colorMenu.separatorSpace') : char });
         }
         if (widget.type === 'flex-separator') {
-            return 'Flex Separator';
+            return t('colorMenu.flexSeparator');
         }
 
         const widgetImpl = getWidget(widget.type);
@@ -309,7 +310,7 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
     let colorDisplay;
     if (editingBackground) {
         if (!currentColor || currentColor === '') {
-            colorDisplay = chalk.gray('(no background)');
+            colorDisplay = chalk.gray(t('colorMenu.noBackground'));
         } else {
             // Determine display name based on format
             let displayName;
@@ -328,7 +329,7 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
         }
     } else {
         if (!currentColor || currentColor === '') {
-            colorDisplay = chalk.gray('(default)');
+            colorDisplay = chalk.gray(t('colorMenu.defaultColor'));
         } else {
             // Determine display name based on format
             let displayName;
@@ -351,13 +352,13 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
     if (showClearConfirm) {
         return (
             <Box flexDirection='column'>
-                <Text bold color='yellow'>⚠ Confirm Clear All Colors</Text>
+                <Text bold color='yellow'>{t('colorMenu.confirmClearTitle')}</Text>
                 <Box marginTop={1} flexDirection='column'>
-                    <Text>This will reset all colors for all widgets to their defaults.</Text>
-                    <Text color='red'>This action cannot be undone!</Text>
+                    <Text>{t('colorMenu.confirmClearMsg')}</Text>
+                    <Text color='red'>{t('colorMenu.confirmClearWarning')}</Text>
                 </Box>
                 <Box marginTop={2}>
-                    <Text>Continue?</Text>
+                    <Text>{t('common.continue')}</Text>
                 </Box>
                 <Box marginTop={1}>
                     <ConfirmDialog
@@ -382,18 +383,18 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
     const hasGlobalFgOverride = !!settings.overrideForegroundColor;
     const hasGlobalBgOverride = !!settings.overrideBackgroundColor && !powerlineEnabled;
     const globalOverrideMessage = hasGlobalFgOverride && hasGlobalBgOverride
-        ? '⚠ Global override for FG and BG active'
+        ? t('colorMenu.globalOverrideFgBg')
         : hasGlobalFgOverride
-            ? '⚠ Global override for FG active'
+            ? t('colorMenu.globalOverrideFg')
             : hasGlobalBgOverride
-                ? '⚠ Global override for BG active'
+                ? t('colorMenu.globalOverrideBg')
                 : null;
 
     return (
         <Box flexDirection='column'>
             <Box>
                 <Text bold>
-                    Configure Colors
+                    {t('colorMenu.title')}
                     {lineIndex !== undefined ? ` - Line ${lineIndex + 1}` : ''}
                     {editingBackground && chalk.yellow(' [Background Mode]')}
                 </Text>
@@ -406,48 +407,43 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
             </Box>
             {hexInputMode ? (
                 <Box flexDirection='column'>
-                    <Text>Enter 6-digit hex color code (without #):</Text>
+                    <Text>{t('colorMenu.hexPrompt')}</Text>
                     <Text>
                         #
                         {hexInput}
                         <Text dimColor>{hexInput.length < 6 ? '_'.repeat(6 - hexInput.length) : ''}</Text>
                     </Text>
                     <Text> </Text>
-                    <Text dimColor>Press Enter when done, ESC to cancel</Text>
+                    <Text dimColor>{t('colorMenu.hexAnsiHint')}</Text>
                 </Box>
             ) : ansi256InputMode ? (
                 <Box flexDirection='column'>
-                    <Text>Enter ANSI 256 color code (0-255):</Text>
+                    <Text>{t('colorMenu.ansi256Prompt')}</Text>
                     <Text>
                         {ansi256Input}
                         <Text dimColor>{ansi256Input.length === 0 ? '___' : ansi256Input.length === 1 ? '__' : ansi256Input.length === 2 ? '_' : ''}</Text>
                     </Text>
                     <Text> </Text>
-                    <Text dimColor>Press Enter when done, ESC to cancel</Text>
+                    <Text dimColor>{t('colorMenu.hexAnsiHint')}</Text>
                 </Box>
             ) : (
                 <>
                     <Text dimColor>
-                        ↑↓ to select, ←→ to cycle
-                        {' '}
-                        {editingBackground ? 'background' : 'foreground'}
-                        , (f) to toggle bg/fg, (b)old,
-                        {settings.colorLevel === 3 ? ' (h)ex,' : settings.colorLevel === 2 ? ' (a)nsi256,' : ''}
-                        {' '}
-                        (r)eset, (c)lear all, ESC to go back
+                        {t('colorMenu.hintMain', { target: editingBackground ? t('colorMenu.background') : t('colorMenu.foreground') })}
+                        {settings.colorLevel === 3 ? t('colorMenu.hintHex') : settings.colorLevel === 2 ? t('colorMenu.hintAnsi256') : ''}
+                        {t('colorMenu.hintEnd')}
                     </Text>
                     {!settings.powerline.enabled && !settings.defaultSeparator && (
                         <Text dimColor>
-                            (s)how separators:
-                            {showSeparators ? chalk.green('ON') : chalk.gray('OFF')}
+                            {t('colorMenu.showSeparators', { status: showSeparators ? chalk.green('ON') : chalk.gray('OFF') })}
                         </Text>
                     )}
                     {selectedWidget ? (
                         <Box marginTop={1}>
                             <Text>
-                                Current
+                                {t('colorMenu.currentLabel')}
                                 {' '}
-                                {editingBackground ? 'background' : 'foreground'}
+                                {editingBackground ? t('colorMenu.background') : t('colorMenu.foreground')}
                                 {' '}
                                 (
                                 {colorNumber === 'custom' ? 'custom' : `${colorNumber}/${colorList.length}`}
@@ -499,8 +495,8 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ widgets, lineIndex, settin
                 )}
             </Box>
             <Box marginTop={1} flexDirection='column'>
-                <Text color='yellow'>⚠ VSCode Users: </Text>
-                <Text dimColor wrap='wrap'>If colors appear incorrect in the VSCode integrated terminal, the "Terminal › Integrated: Minimum Contrast Ratio" (`terminal.integrated.minimumContrastRatio`) setting is forcing a minimum contrast between foreground and background colors. You can adjust this setting to 1 to disable the contrast enforcement, or use a standalone terminal for accurate colors.</Text>
+                <Text color='yellow'>{t('colorMenu.vscodeWarning')}</Text>
+                <Text dimColor wrap='wrap'>{t('colorMenu.vscodeWarningHint')}</Text>
             </Box>
         </Box>
     );

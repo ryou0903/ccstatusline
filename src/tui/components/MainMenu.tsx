@@ -4,6 +4,7 @@ import {
 } from 'ink';
 import React from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import { type PowerlineFontStatus } from '../../utils/powerline';
 
@@ -16,6 +17,7 @@ export type MainMenuOption = 'lines'
     | 'globalOverrides'
     | 'install'
     | 'configureStatusLine'
+    | 'language'
     | 'starGithub'
     | 'save'
     | 'exit';
@@ -46,90 +48,91 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         description: string;
     } | '-')[] = [
         {
-            label: '📝 Edit Lines',
+            label: t('menu.editLines'),
             value: 'lines',
-            description:
-                'Configure any number of status lines with various widgets like model info, git status, and token usage'
+            description: t('menu.editLinesDesc')
         },
         {
-            label: '🎨 Edit Colors',
+            label: t('menu.editColors'),
             value: 'colors',
-            description:
-                'Customize colors for each widget including foreground, background, and bold styling'
+            description: t('menu.editColorsDesc')
         },
         {
-            label: '⚡ Powerline Setup',
+            label: t('menu.powerline'),
             value: 'powerline',
-            description:
-                'Install Powerline fonts for enhanced visual separators and symbols in your status line'
+            description: t('menu.powerlineDesc')
         },
         '-' as const,
         {
-            label: '💻 Terminal Options',
+            label: t('menu.terminalOptions'),
             value: 'terminalConfig',
-            description: 'Configure terminal-specific settings for optimal display'
+            description: t('menu.terminalOptionsDesc')
         },
         {
-            label: '🌐 Global Overrides',
+            label: t('menu.globalOverrides'),
             value: 'globalOverrides',
-            description:
-                'Set global padding, separators, and color overrides that apply to all widgets'
+            description: t('menu.globalOverridesDesc')
         },
         '-' as const,
         ...(isClaudeInstalled
             ? [
                 {
-                    label: '🔧 Configure Status Line',
+                    label: t('menu.configureStatusLine'),
                     value: 'configureStatusLine' as MainMenuOption,
-                    description: 'Configure Claude Code status line settings like refresh interval'
+                    description: t('menu.configureStatusLineDesc')
                 },
                 {
-                    label: '🔌 Uninstall from Claude Code',
+                    label: t('menu.uninstall'),
                     value: 'install' as MainMenuOption,
-                    description: 'Remove ccstatusline from your Claude Code settings'
+                    description: t('menu.uninstallDesc')
                 }
             ]
             : [
                 {
-                    label: '📦 Install to Claude Code',
+                    label: t('menu.install'),
                     value: 'install' as MainMenuOption,
-                    description: 'Add ccstatusline to your Claude Code settings for automatic status line rendering'
+                    description: t('menu.installDesc')
                 }
             ]
-        )
+        ),
+        {
+            label: t('menu.language'),
+            value: 'language' as MainMenuOption,
+            description: t('menu.languageDesc')
+        }
     ];
 
     if (hasChanges) {
         menuItems.push(
             {
-                label: '💾 Save & Exit',
+                label: t('menu.saveExit'),
                 value: 'save',
-                description: 'Save all changes and exit the configuration tool'
+                description: t('menu.saveExitDesc')
             },
             {
-                label: '❌ Exit without saving',
+                label: t('menu.exitNoSave'),
                 value: 'exit',
-                description: 'Exit without saving your changes'
+                description: t('menu.exitNoSaveDesc')
             },
             '-' as const,
             {
-                label: '⭐ Like ccstatusline? Star us on GitHub',
+                label: t('menu.starGithub'),
                 value: 'starGithub',
-                description: 'Open the ccstatusline GitHub repository in your browser so you can star the project'
+                description: t('menu.starGithubDesc')
             }
         );
     } else {
         menuItems.push(
             {
-                label: '🚪 Exit',
+                label: t('menu.exit'),
                 value: 'exit',
-                description: 'Exit the configuration tool'
+                description: t('menu.exitDesc')
             },
             '-' as const,
             {
-                label: '⭐ Like ccstatusline? Star us on GitHub',
+                label: t('menu.starGithub'),
                 value: 'starGithub',
-                description: 'Open the ccstatusline GitHub repository in your browser so you can star the project'
+                description: t('menu.starGithubDesc')
             }
         );
     }
@@ -143,13 +146,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             {showTruncationWarning && (
                 <Box marginBottom={1}>
                     <Text color='yellow'>
-                        ⚠ Some lines are truncated, see Terminal Options → Terminal Width
-                        for info
+                        {t('menu.truncationWarning')}
                     </Text>
                 </Box>
             )}
 
-            <Text bold>Main Menu</Text>
+            <Text bold>{t('menu.title')}</Text>
 
             <List
                 items={menuItems}

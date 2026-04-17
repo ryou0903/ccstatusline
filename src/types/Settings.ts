@@ -2,11 +2,12 @@ import { z } from 'zod';
 
 import { ColorLevelSchema } from './ColorLevel';
 import { FlexModeSchema } from './FlexMode';
+import { LanguageSchema } from './Language';
 import { PowerlineConfigSchema } from './PowerlineConfig';
 import { WidgetItemSchema } from './Widget';
 
 // Current version - bump this when making breaking changes to the schema
-export const CURRENT_VERSION = 3;
+export const CURRENT_VERSION = 4;
 
 // Schema for v1 settings (before version field was added)
 export const SettingsSchema_v1 = z.object({
@@ -60,6 +61,7 @@ export const SettingsSchema = z.object({
         autoAlign: false,
         continueThemeAcrossLines: false
     }),
+    language: LanguageSchema.default('en'),
     updatemessage: z.object({
         message: z.string().nullable().optional(),
         remaining: z.number().nullable().optional()

@@ -13,6 +13,8 @@ import {
     type PropsWithChildren
 } from 'react';
 
+import { t } from '../../i18n';
+
 export interface ListEntry<V = string | number> {
     label: string;
     sublabel?: string;
@@ -47,7 +49,7 @@ export function List<V = string | number>({
 
     const _items = useMemo(() => {
         if (showBackButton) {
-            return [...items, '-' as const, { label: '← Back', value: 'back' as V }];
+            return [...items, '-' as const, { label: t('common.back'), value: 'back' as V }];
         }
         return items;
     }, [items, showBackButton]);

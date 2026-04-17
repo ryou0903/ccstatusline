@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React, { useState } from 'react';
 
+import { t } from '../../i18n';
 import type { Settings } from '../../types/Settings';
 import type {
     CustomKeybind,
@@ -209,11 +210,11 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
         // Special handling for separators (not widgets)
         if (widget.type === 'separator') {
             const char = widget.character ?? '|';
-            const charDisplay = char === ' ' ? '(space)' : char;
-            return `Separator ${charDisplay}`;
+            const charDisplay = char === ' ' ? t('common.space') : char;
+            return t('itemsEditor.separatorLabel', { char: charDisplay });
         }
         if (widget.type === 'flex-separator') {
-            return 'Flex Separator';
+            return t('itemsEditor.flexSeparatorLabel');
         }
 
         // Handle regular widgets - delegate to widget for display
@@ -224,7 +225,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
             return displayText + (modifierText ? ` ${modifierText}` : '');
         }
         // Unknown widget type
-        return `Unknown: ${widget.type}`;
+        return t('itemsEditor.unknownWidget', { type: widget.type });
     };
 
     const hasFlexSeparator = widgets.some(widget => widget.type === 'flex-separator');
@@ -274,29 +275,29 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
 
     // Build main help text (without custom keybinds)
     let helpText = hasWidgets
-        ? '↑↓ select, ←→ open type picker'
-        : '(a)dd via picker, (i)nsert via picker';
+        ? t('itemsEditor.hintNav')
+        : t('itemsEditor.hintAddInsert');
     if (isSeparator) {
-        helpText += ', Space edit separator';
+        helpText += t('itemsEditor.hintSeparator');
     }
     if (hasWidgets) {
-        helpText += ', Enter to move, (a)dd via picker, (i)nsert via picker, (d)elete, (c)lear line';
+        helpText += t('itemsEditor.hintActions');
     }
     if (canToggleRaw) {
-        helpText += ', (r)aw value';
+        helpText += t('itemsEditor.hintRaw');
     }
     if (canMerge) {
-        helpText += ', (m)erge';
+        helpText += t('itemsEditor.hintMerge');
     }
-    helpText += ', ESC back';
+    helpText += t('itemsEditor.hintEsc');
 
     // Build custom keybinds text
     const customKeybindsText = customKeybinds.map(kb => kb.label).join(', ');
     const pickerActionLabel = widgetPicker?.action === 'add'
-        ? 'Add Widget'
+        ? t('itemsEditor.addWidget')
         : widgetPicker?.action === 'insert'
-            ? 'Insert Widget'
-            : 'Change Widget Type';
+            ? t('itemsEditor.insertWidget')
+            : t('itemsEditor.changeWidgetType');
 
     // If custom editor is active, render it instead of the normal UI
     if (customEditorWidget?.impl.renderEditor) {
@@ -311,18 +312,13 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
     if (showClearConfirm) {
         return (
             <Box flexDirection='column'>
-                <Text bold color='yellow'>⚠ Confirm Clear Line</Text>
+                <Text bold color='yellow'>{t('itemsEditor.confirmClearTitle')}</Text>
                 <Box marginTop={1} flexDirection='column'>
-                    <Text>
-                        This will remove all widgets from Line
-                        {' '}
-                        {lineNumber}
-                        .
-                    </Text>
-                    <Text color='red'>This action cannot be undone!</Text>
+                    <Text>{t('itemsEditor.confirmClearMsg', { n: lineNumber.toString() })}</Text>
+                    <Text color='red'>{t('itemsEditor.confirmClearWarning')}</Text>
                 </Box>
                 <Box marginTop={2}>
-                    <Text>Continue?</Text>
+                    <Text>{t('common.continue')}</Text>
                 </Box>
                 <Box marginTop={1}>
                     <ConfirmDialog
@@ -345,12 +341,12 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
         <Box flexDirection='column'>
             <Box>
                 <Text bold>
-                    Edit Line
+                    {t('itemsEditor.title')}
                     {' '}
                     {lineNumber}
                     {' '}
                 </Text>
-                {moveMode && <Text color='blue'>[MOVE MODE]</Text>}
+                {moveMode && <Text color='blue'>{t('itemsEditor.moveMode')}</Text>}
                 {widgetPicker && <Text color='cyan'>{`[${pickerActionLabel.toUpperCase()}]`}</Text>}
                 {(settings.powerline.enabled || Boolean(settings.defaultSeparator)) && (
                     <Box marginLeft={2}>
@@ -358,43 +354,43 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                             ⚠
                             {' '}
                             {settings.powerline.enabled
-                                ? 'Powerline mode active: separators controlled by powerline settings'
-                                : 'Default separator active: manual separators disabled'}
+                                ? t('itemsEditor.powerlineWarning')
+                                : t('itemsEditor.defaultSepWarning')}
                         </Text>
                     </Box>
                 )}
             </Box>
             {moveMode ? (
                 <Box flexDirection='column' marginBottom={1}>
-                    <Text dimColor>↑↓ to move widget, ESC or Enter to exit move mode</Text>
+                    <Text dimColor>{t('itemsEditor.moveModeHint')}</Text>
                 </Box>
             ) : widgetPicker ? (
                 <Box flexDirection='column'>
                     {widgetPicker.level === 'category' ? (
                         <>
                             {widgetPicker.categoryQuery.trim().length > 0 ? (
-                                <Text dimColor>↑↓ select widget match, Enter apply, ESC clear/cancel</Text>
+                                <Text dimColor>{t('itemsEditor.pickerHintMatch')}</Text>
                             ) : (
-                                <Text dimColor>↑↓ select category, type to search all widgets, Enter continue, ESC cancel</Text>
+                                <Text dimColor>{t('itemsEditor.pickerHintCategory')}</Text>
                             )}
                             <Box>
-                                <Text dimColor>Search: </Text>
-                                <Text color='cyan'>{widgetPicker.categoryQuery || '(none)'}</Text>
+                                <Text dimColor>{t('itemsEditor.searchLabel')}</Text>
+                                <Text color='cyan'>{widgetPicker.categoryQuery || t('itemsEditor.searchNone')}</Text>
                             </Box>
                         </>
                     ) : (
                         <>
-                            <Text dimColor>↑↓ select widget, type to search widgets, Enter apply, ESC back</Text>
+                            <Text dimColor>{t('itemsEditor.pickerHintWidget')}</Text>
                             <Box>
                                 <Text dimColor>
-                                    Category:
+                                    {t('itemsEditor.categoryLabel')}
                                     {' '}
-                                    {selectedPickerCategory ?? '(none)'}
+                                    {selectedPickerCategory ?? t('itemsEditor.searchNone')}
                                     {' '}
-                                    | Search:
+                                    {t('itemsEditor.categorySearchLabel')}
                                     {' '}
                                 </Text>
-                                <Text color='cyan'>{widgetPicker.widgetQuery || '(none)'}</Text>
+                                <Text color='cyan'>{widgetPicker.widgetQuery || t('itemsEditor.searchNone')}</Text>
                             </Box>
                         </>
                     )}
@@ -407,8 +403,11 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
             )}
             {hasFlexSeparator && !widthDetectionAvailable && (
                 <Box marginTop={1}>
-                    <Text color='yellow'>⚠ Note: Terminal width detection is currently unavailable in your environment.</Text>
-                    <Text dimColor>  Flex separators will act as normal separators until width detection is available.</Text>
+                    <Text color='yellow'>{t('itemsEditor.flexWidthWarning')}</Text>
+                    <Text dimColor>
+                        {'  '}
+                        {t('itemsEditor.flexWidthWarningHint')}
+                    </Text>
                 </Box>
             )}
             {widgetPicker && (
@@ -416,7 +415,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                     {widgetPicker.level === 'category' ? (
                         widgetPicker.categoryQuery.trim().length > 0 ? (
                             topLevelSearchEntries.length === 0 ? (
-                                <Text dimColor>No widgets match the search.</Text>
+                                <Text dimColor>{t('itemsEditor.noWidgetsMatch')}</Text>
                             ) : (
                                 <>
                                     {topLevelSearchEntries.map((entry, index) => {
@@ -451,7 +450,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                             )
                         ) : (
                             pickerCategories.length === 0 ? (
-                                <Text dimColor>No categories available.</Text>
+                                <Text dimColor>{t('itemsEditor.noCategories')}</Text>
                             ) : (
                                 <>
                                     {pickerCategories.map((category, index) => {
@@ -471,7 +470,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                                     })}
                                     {selectedPickerCategory === 'All' && (
                                         <Box marginTop={1} paddingLeft={2}>
-                                            <Text dimColor>Search across all widget categories.</Text>
+                                            <Text dimColor>{t('itemsEditor.searchAllCategories')}</Text>
                                         </Box>
                                     )}
                                 </>
@@ -479,7 +478,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                         )
                     ) : (
                         pickerEntries.length === 0 ? (
-                            <Text dimColor>No widgets match the current category/search.</Text>
+                            <Text dimColor>{t('itemsEditor.noCategoryMatch')}</Text>
                         ) : (
                             <>
                                 {pickerEntries.map((entry, index) => {
@@ -518,7 +517,7 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
             {!widgetPicker && (
                 <Box marginTop={1} flexDirection='column'>
                     {widgets.length === 0 ? (
-                        <Text dimColor>No widgets. Press 'a' to add one.</Text>
+                        <Text dimColor>{t('itemsEditor.noWidgets')}</Text>
                     ) : (
                         <>
                             {widgets.map((widget, index) => {
@@ -543,9 +542,9 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                                                 {modifierText}
                                             </Text>
                                         )}
-                                        {supportsRawValue && widget.rawValue && <Text dimColor> (raw value)</Text>}
-                                        {widget.merge === true && <Text dimColor> (merged→)</Text>}
-                                        {widget.merge === 'no-padding' && <Text dimColor> (merged-no-pad→)</Text>}
+                                        {supportsRawValue && widget.rawValue && <Text dimColor>{` ${t('itemsEditor.rawValue')}`}</Text>}
+                                        {widget.merge === true && <Text dimColor>{` ${t('itemsEditor.merged')}`}</Text>}
+                                        {widget.merge === 'no-padding' && <Text dimColor>{` ${t('itemsEditor.mergedNoPad')}`}</Text>}
                                     </Box>
                                 );
                             })}
@@ -555,12 +554,12 @@ export const ItemsEditor: React.FC<ItemsEditorProps> = ({ widgets, onUpdate, onB
                                     <Text dimColor>
                                         {(() => {
                                             if (currentWidget.type === 'separator') {
-                                                return 'A separator character between status line widgets';
+                                                return t('itemsEditor.separatorDesc');
                                             } else if (currentWidget.type === 'flex-separator') {
-                                                return 'Expands to fill available terminal width';
+                                                return t('itemsEditor.flexSeparatorDesc');
                                             } else {
                                                 const widgetImpl = getWidget(currentWidget.type);
-                                                return widgetImpl ? widgetImpl.getDescription() : 'Unknown widget type';
+                                                return widgetImpl ? widgetImpl.getDescription() : t('itemsEditor.unknownWidget', { type: currentWidget.type });
                                             }
                                         })()}
                                     </Text>

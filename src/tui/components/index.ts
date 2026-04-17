@@ -4,6 +4,7 @@ export * from './ConfirmDialog';
 export * from './GlobalOverridesMenu';
 export * from './InstallMenu';
 export * from './ItemsEditor';
+export * from './LanguageSelector';
 export * from './LineSelector';
 export * from './MainMenu';
 export * from './PowerlineSetup';

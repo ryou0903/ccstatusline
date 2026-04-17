@@ -5,6 +5,7 @@ import {
 } from 'ink';
 import React from 'react';
 
+import { t } from '../../i18n';
 import type { RenderContext } from '../../types/RenderContext';
 import type { Settings } from '../../types/Settings';
 import type { WidgetItem } from '../../types/Widget';
@@ -102,8 +103,7 @@ export const StatusLinePreview: React.FC<StatusLinePreviewProps> = ({ lines, ter
         <Box flexDirection='column'>
             <Box borderStyle='round' borderColor='gray' borderDimColor width='100%' paddingLeft={1}>
                 <Text>
-                    &gt;
-                    <Text dimColor> Preview  (ctrl+s to save configuration at any time)</Text>
+                    {t('preview.label')}
                 </Text>
             </Box>
             {renderedLines.map((line, index) => (
